@@ -108,9 +108,15 @@ Templates y Jinja2 en Flask
 Que es jinja2? Es el motor de plantillas que usa flask para renderizar HTML dinámico
 Permimte insertar variables de python en HTML
 
-las variables {{}} se reemplazan con valores en flask
+las variables {{}} se reemplazan con valores enviados desde flask
     
 if __name__ == "__main__":
     app.run(debug=True)
+
+|upper es para poner las lechas en mayuscula
+
+
+HERENCIA DE PLANTILLAS
+
 
 
