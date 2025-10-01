@@ -115,8 +115,140 @@ if __name__ == "__main__":
 
 |upper es para poner las lechas en mayuscula
 
+1/10/2025 
 
-HERENCIA DE PLANTILLAS
+¿QUÉ ES UN CRUD?
+CRUD SIGNIFICA CREATE, READ, UPDATE, DELETE. Es el conjunto de operaciones basicas que se realizan sobre una base de datos
+CREATE: INSERTAR NUEVOS REGISTROS
+READ: CONSULTAR DATOS EXISTENTES
+UPDATE: MODIFICAR REGISTROS
+DELETE: ELIMINAR REGISTROS
 
+PARA CONECTAR CON LA BASE DE DATOS EN EL TERMINAL DE VISUAL STUDIO CODE:
+pip install mysql-connector-python
+
+se crea un nuevo archivo llamado dbtest.py 
+y se escribe el siguiente codigo reemplazando los valores segun mi base de datos:
+
+import mysql.connector
+
+def get_connection():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="root"
+        database="classicmodels"
+    )
+
+esta función devuelve una conexión lista para usar en las operaciones CRUD
+
+CREATE - INSERTAR UN CLIENTE:
+import mysql.connector
+
+def get_connection():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="root",
+        database="classicmodels"
+    )
+
+def crear_customer(customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, city, country):
+    conn = get_connection()
+    cursor = conn.cursor()
+    sql = """INSERT INTO customers (customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, city, country) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+    values = (customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, city, country)
+    cursor.execute(sql, values)
+    conn.commit()
+    last_id = cursor.lastrowid
+    cursor.close()
+    conn.close()
+    return last_id
+
+id = 497
+empresa = "nueva empresa talentotech"
+nombre = "olga"
+apellido = "torres"
+telefono = "3134445731"
+direccion = "cll 68 # 27-84"
+ciudad = "bucaramanga"
+pais = "colombia"
+print(crear_customer(id,empresa,nombre,apellido,telefono,direccion,ciudad,pais))
+
+luego en ejecutar se pone: python dbtest.py y se guardan los datos en la BD de MySQL
+
+READ - CONSULTAR:
+def obtener_productos():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("select * from productos")               PARA CONSULTAR TODOS LOS PRODUCTOS
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows                                        
+
+def obtener_productos(id):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("select * from productos where idproductos=%s", (id,))            PARA CONSULTAR UN SOLO PRODUCTO POR SU ID
+    rows = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return rows
+
+UPDATE - MODIFICAR
+
+def actualizar_productos(idproductos, nombre, precio, descripcion, lote, unidades_disponibles):
+    conn = get_connection()
+    cursor = conn.cursor()
+    values = (nombre, precio, descripcion, lote, unidades_disponibles, idproductos)
+    cursor.execute("update productos set nombre=%s, precio=%s, descripcion=%s, lote=%s, unidades_disponibles=%s where idproductos=%s", values)    *##IMPORTANTE PONER EL WHERE AL FINAL EN EL ID*
+    conn.commit()
+    cursor.close()
+    conn.close
+    return "producto actualizado" 
+
+nombre = "polvo compacto"
+precio = "16000"
+descripcion = "polvo compacto color piel con filtro solar"
+lote = "045"
+unidades_disponibles = "57"
+id = 1
+
+print(actualizar_productos(id, nombre, precio, descripcion, lote, unidades_disponibles))
+
+DELETE - ELIMINAR
+
+def eliminar_productos(idproductos):
+    conn = get_connection()
+    cursor = conn.cursor()
+    values = (idproductos,)
+    cursor.execute("delete from productos where idproductos=%s", values)
+    conn.commit()
+    cursor.close()
+    conn.close
+    return "producto eliminado" 
+
+print(eliminar_productos(4))
+
+
+METODO PARA CREAR, LEER, ACTUALIZAR O ELIMINAR
+
+while True:
+    opcion = input("ingrese una opcion crear, leer, actualizar o eliminar")
+    if opcion == "crear":
+        print("ingrese los datos del producto")
+        nombre = input("ingrese el nombre del producto")
+        precio = input("ingrese el precio")
+        descripcion = input("ingrese una descripcion del producto")
+        lote = input("ingrese el lote del producto")
+        unidades_disponibles = input("ingrese las unidades disponibles del producto")
+        id = crear_productos(nombre,precio,descripcion,lote,unidades_disponibles)
+        print(f"se creo el producto con id {id}")
+    if opcion == "leer":
+        print("estos son los productos")
+        productos = obtener_productos()
+        for producto in productos:
+            print(producto)
 
 
