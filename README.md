@@ -234,21 +234,62 @@ print(eliminar_productos(4))
 
 METODO PARA CREAR, LEER, ACTUALIZAR O ELIMINAR
 
-while True:
-    opcion = input("ingrese una opcion crear, leer, actualizar o eliminar")
-    if opcion == "crear":
-        print("ingrese los datos del producto")
-        nombre = input("ingrese el nombre del producto")
-        precio = input("ingrese el precio")
-        descripcion = input("ingrese una descripcion del producto")
-        lote = input("ingrese el lote del producto")
-        unidades_disponibles = input("ingrese las unidades disponibles del producto")
-        id = crear_productos(nombre,precio,descripcion,lote,unidades_disponibles)
-        print(f"se creo el producto con id {id}")
-    if opcion == "leer":
-        print("estos son los productos")
-        productos = obtener_productos()
-        for producto in productos:
-            print(producto)
+def crear_customer(nombre,apellido, email, telefono):
+    conn = get_connection()
+    cursor = conn.cursor()
+    sql = """INSERT INTO usuarios 
+             (nombre,apellido, email, telefono) 
+             VALUES (%s, %s, %s, %s)"""
+    values = (nombre,apellido, email, telefono)
+    cursor.execute(sql, values)
+    conn.commit()
+    last_id = cursor.lastrowid
+    cursor.close()
+    conn.close()
+    return last_id
+
+def obtener_usuarios():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("select * from usuarios")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
+def obtener_usuario(id):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("select * from usuarios where idusuario=%s", (id,))
+    rows = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return rows
+
+def actualizar_usuario(idusuario, email, telefono):
+    conn = get_connection()
+    cursor = conn.cursor()
+    values = (email,telefono, idusuario)
+    cursor.execute("update usuarios set email=%s, telefono=%s where idusuario=%s", values)
+    conn.commit()
+    cursor.close()
+    conn.close
+    return "usuario actualizado"
+
+def eliminar_usuario(idusuario):
+    conn = get_connection()
+    cursor = conn.cursor()
+    values = (idusuario,)
+    cursor.execute("delete from usuarios where idusuario=%s", values)
+    conn.commit()
+    cursor.close()
+    conn.close
+    return "usuario eliminado"
+
+
+@app.route("/")
+def hello():
+    return render_template("index.html", titulo="sobre nosotros")
+
 
 
